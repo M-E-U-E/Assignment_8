@@ -1,0 +1,35 @@
+# Python Bytecode
+__pycache__/
+*.pyc
+*.pyo
+
+# Virtual Environment
+venv/
+
+# Logs
+*.log
+
+# Coverage Reports
+.coverage
+htmlcov/
+
+# Environment Variables
+.env
+
+# Test Cache Files
+tests/__pycache__/
+tests/*.cpython-*.pyc
+
+# City Data (optional: skip if it's generated output)
+city_data/
+
+# IDE Specific Files
+.vscode/
+.idea/
+
+# Temporary Files
+*.tmp
+*.bak
+
+# macOS Files
+.DS_Store

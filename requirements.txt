@@ -1,0 +1,6 @@
+
+scrapy
+aiohttp
+pytest
+sqlalchemy
+psycopg2-binary
