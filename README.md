@@ -4,14 +4,11 @@
 ## Table of Contents
 - [Description](#description)
 - [Git Clone Instructions](#git-clone-instructions)
-- [Access the Application](#access_the_application)
-- [Sitemap Generation](#sitemap_generation)
 - [Test](#test)
 - [Project Structure](#project-structure)
 - [Technologies Used](#technologies-used)
 - [Code Coverage](#code_coverage)
-- [Schema](#schema)
-- [Authorization Rules](#authorization_rules)
+- [Code Coverage Report](#code_coverage_report)
 - [Dependencies](#dependencies)
 - [Remember](#remember)
 
@@ -40,79 +37,61 @@ To clone this project to your local machine, follow these steps:
     # Create virtual environment On macOS/Linux:
        python3 -m venv env
        source env/bin/activate
-       pip install django
+
     # Activate virtual environment
     # Create virtual environment On Windows:
        python -m venv env
        venv\Scripts\activate
-       pip install django
+
     
     ```
     Install Dependencies
     ```bash
     pip install -r requirements.txt
     ```
+    **Run In docker**
+    ```
+    docker-compose up --build
+    ```
+    After set up the docker
+    Go to new terminal the run this code to open psql db
+    ```
+    docker exec -it assignment_8-db-1 psql -U username -d hotel_db
+    ```
+    ```
+    \dt [list of the tables]
+    SELECT * FROM hotels; [see all hotels]
+    SELECT * FROM hotels LIMIT 10; [only show 10 hotels]
+    \q for exit
 
-5. **Docker Instructions**
 
-    To run the project using Docker, follow these steps:
-
-    Build and Run Docker Containers Ensure you have Docker and Docker Compose installed. Then, use the following commands to build and run the containers:
-  ```
-      docker compose build
-      docker compose up
-   ```
-
-   This will start both the PostgreSQL/PostGIS container and the Django application container.
    
-   Apply Migrations in Docker After the containers are up, run the migrations inside the Django container:
-   ```
-   docker exec -it django_web python manage.py makemigrations
-   docker exec -it django_web python manage.py migrate
-   ```
-   
-   Create a Superuser in Docker Create a superuser to access the admin panel:
-   ```
-   docker-compose exec web python manage.py createsuperuser
-   ```
-   then create superuser
-   ```
-      Username (leave blank to use 'root'): 
-      Email address: 
-      Password: 
-      Password (again): 
-   ```
 
-
-## Sitemap Generation
-   Add locations through json file:
-   ```
-   docker-compose exec web python manage.py loaddata locations_fixture.json
-   ```
-   then generate the sitemap
-   
-   Run this code:
-   ```
-      docker-compose exec web python manage.py generate_sitemap
-   ```
-   This will create a sitemap.json containing all property locations.
-   
-   #### After this we can import or export csv file, json file.
 
 
 ## Test
   Run the testing file:
+  Ensure the coverage is install:
    ```
-      docker-compose run web coverage run manage.py test
+   pip install coverage
+   ```
+   Check the version:
+   ```
+   coverage --version
+   ```
+
+   ```
+   coverage run --source=trip -m unittest discover -s tests
+   ```
+  See report in terminal:
+   ```
+   coverage report -m
    ```
   Run the testing html:
    ```
-      docker-compose run web coverage html
+   coverage html
    ```
-  See the testig html:
-   ```
-      xdg-open htmlcov/index.html
-   ```
+ 
     
 
 ## Project Structure
@@ -171,47 +150,23 @@ Assignment_8/
         - trip/db/database.py
         - trip/db/models.py
 
-
-## Schema
-  Database Schema (In-Memory):
-  ```
-  Users Table:
-  +----------+-----------+----------+-------+
-  | id       | username  | email    | role  |
-  +----------+-----------+----------+-------+
-  | string   | string    | string   | string|
-  +----------+-----------+----------+-------+
-
-  Accommodations Table:
-  +----------+----------+---------------+--------+--------+-------------+----------+----------+------------+------------+
-  | id       | feed     | title         | country_code | bedroom_count | review_score | usd_rate | center     | user_id    | published |
-  +----------+----------+---------------+--------+--------+-------------+----------+----------+------------+------------+
-  | string   | int      | string        | string | int     | decimal     | decimal  | PointField | ForeignKey | bool      |
-  +----------+----------+---------------+--------+--------+-------------+----------+----------+------------+------------+
-
-  LocalizeAccommodations Table:
-  +----------+---------------+----------+-------------+--------+
-  | id       | property_id   | language | description | policy |
-  +----------+---------------+----------+-------------+--------+
-  | int      | ForeignKey    | string   | text        | JSON   |
-  +----------+---------------+----------+-------------+--------+
-
-  Locations Table:
-  +----------+--------+-------------+----------+----------------+-------------+----------+----------+------------+------------+
-  | id       | title  | center      | parent_id| location_type  | country_code| state_abbr| city     | created_at | updated_at |
-  +----------+--------+-------------+----------+----------------+-------------+----------+----------+------------+------------+
-  | string   | string | PointField  | ForeignKey| string         | string      | string   | string   | datetime   | datetime   |
-  +----------+--------+-------------+----------+----------------+-------------+----------+----------+------------+------------+
-
-  PropertyOwners Table:
-  +----------+--------+----------+----------+-------------+------------+
-  | id       | name   | email    | phone    | address     | created_at |
-  +----------+--------+----------+----------+-------------+------------+
-  | string   | string | string   | string   | text        | datetime   |
-  +----------+--------+----------+----------+-------------+------------+
+## Code Coverage Report
 ```
+| **File**                                | **Statements** | **Missing** | **Coverage** | **Missing Lines**                          |
+|-----------------------------------------|---------------:|------------:|-------------:|-------------------------------------------|
+| `trip/__init__.py`                      | 0             | 0          | 100%         | -                                         |
+| `trip/db/__init__.py`                   | 0             | 0          | 100%         | -                                         |
+| `trip/db/database.py`                   | 10            | 0          | 100%         | -                                         |
+| `trip/db/models.py`                     | 17            | 0          | 100%         | -                                         |
+| `trip/items.py`                         | 16            | 0          | 100%         | -                                         |
+| `trip/middlewares.py`                   | 0             | 0          | 100%         | -                                         |
+| `trip/pipelines.py`                     | 38            | 22         | 42%          | 52-55, 59-62, 72-73, 78-79, 82-104         |
+| `trip/settings.py`                      | 10            | 0          | 100%         | -                                         |
+| `trip/spiders/__init__.py`              | 0             | 0          | 100%         | -                                         |
+| `trip/spiders/async_trip_spider.py`     | 126           | 63         | 50%          | 31-49, 53-54, 65-81, 87-115, 141-142, 152-154, 181, 209-214, 220-229, 238-239 |
+| **TOTAL**                               | **217**       | **85**     | **61%**      | -                                         |
   
-
+```
   
  ## Dependencies
   All dependencies are listed in requirements.txt. Install them using:
