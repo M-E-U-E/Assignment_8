@@ -78,29 +78,53 @@ class PostgresPipeline:
         print("Database session Closed.")
         self.session.close()
         
-
     def process_item(self, item, spider):
-        # Map incoming Scrapy data to Hotel model fields
-        hotel = Hotel(
-            title=item.get("property_title"),  # Maps 'property_title' to 'title'
-            city_name=item.get("city_name"),
-            hotel_id=item.get("hotel_id"),
-            price=float(item.get("price", 0.0)),
-            rating=float(item.get("rating", 0.0)),
-            location=item.get("address"),  # Maps 'address' to 'location'
-            latitude=float(item.get("latitude", 0.0)),
-            longitude=float(item.get("longitude", 0.0)),
-            room_type=item.get("room_type"),
-            image_url=item.get("image"),
-            image_path=item.get("image_path"),
-        )
         try:
+            hotel = Hotel(
+                city_name=item.get("city_name"),
+                property_title=item.get("property_title"),  # Use 'property_title' to match the model
+                hotel_id=item.get("hotel_id"),
+                price=float(item.get("price", 0.0)) if item.get("price") else None,  # Validate price
+                rating=float(item.get("rating", 0.0)) if item.get("rating") else None,  # Validate rating
+                address=item.get("address"),
+                latitude=float(item.get("latitude", 0.0)) if item.get("latitude") else None,  # Validate latitude
+                longitude=float(item.get("longitude", 0.0)) if item.get("longitude") else None,  # Validate longitude
+                room_type=item.get("room_type"),
+                image=item.get("image"),
+                image_path=item.get("image_path"),
+            )
             self.session.add(hotel)
             self.session.commit()
-            print(f"Item inserted successfully: {item}")
-        except IntegrityError:
-            self.session.rollback()  # Handle duplicates
+            spider.logger.info(f"Hotel data saved: {hotel}")
+        except Exception as e:
+            self.session.rollback()
+            spider.logger.error(f"Failed to save hotel: {e}")
+        finally:
+            self.session.close()
         return item
+
+    # def process_item(self, item, spider):
+    #     # Map incoming Scrapy data to Hotel model fields
+    #     hotel = Hotel(
+    #         title=item.get("property_title"),  # Maps 'property_title' to 'title'
+    #         city_name=item.get("city_name"),
+    #         hotel_id=item.get("hotel_id"),
+    #         price=float(item.get("price", 0.0)),
+    #         rating=float(item.get("rating", 0.0)),
+    #         location=item.get("address"),  # Maps 'address' to 'location'
+    #         latitude=float(item.get("latitude", 0.0)),
+    #         longitude=float(item.get("longitude", 0.0)),
+    #         room_type=item.get("room_type"),
+    #         image_url=item.get("image"),
+    #         image_path=item.get("image_path"),
+    #     )
+    #     try:
+    #         self.session.add(hotel)
+    #         self.session.commit()
+    #         print(f"Item inserted successfully: {item}")
+    #     except IntegrityError:
+    #         self.session.rollback()  # Handle duplicates
+    #     return item
         # # Add and commit the hotel instance to the database
         # self.session.add(hotel)
         # self.session.commit()

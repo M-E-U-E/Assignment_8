@@ -9,7 +9,7 @@ class Hotel(Base):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     city_name = Column(String, nullable=False)
-    property_title = Column(String, nullable=False)
+    property_title = Column(String)
     hotel_id = Column(String, unique=True, nullable=False)
     price = Column(Float)
     rating = Column(Float)

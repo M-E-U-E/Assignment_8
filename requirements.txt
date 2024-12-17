@@ -5,3 +5,6 @@ pytest
 sqlalchemy
 psycopg2-binary
 coverage
+pytest
+pytest-cov
+unittest-xml-reporting

@@ -23,27 +23,30 @@ class AsyncHotelSpider(scrapy.Spider):
             return
 
         try:
-            # Parse the extracted script data as JSON
+            # Load JSON string into a Python dictionary
             data = json.loads(script_data)
-            hotel_list = data.get("initData", {}).get("htlsData", {}).get("hotelList", [])
-            
+            hotel_list = data.get("initData", {}).get("firstPageList", {}).get("hotelList", [])
+
             for hotel in hotel_list:
                 item = {
                     "city_name": hotel.get("cityName", ""),
-                    "property_title": hotel.get("hotelName", ""),
+                    "property_name": hotel.get("hotelName", ""),  # Update to match SQLAlchemy model
                     "hotel_id": hotel.get("hotelId", ""),
                     "price": hotel.get("price", 0),
-                    "rating": hotel.get("rating", 0.0),
+                    "rating": float(hotel.get("rating", 0.0)),
                     "address": hotel.get("address", ""),
                     "latitude": hotel.get("latitude", 0.0),
                     "longitude": hotel.get("longitude", 0.0),
                     "room_type": hotel.get("roomType", ""),
                     "image": hotel.get("imageUrl", ""),
+                    "image_path": image_path,
                 }
                 self.logger.info(f"Yielding item: {item}")
                 yield item
         except json.JSONDecodeError as e:
-            self.logger.error(f"Failed to parse script data as JSON: {e}")
+            self.logger.error(f"JSON Decode Error: {e}")
+        except Exception as e:
+            self.logger.error(f"Unexpected error during parsing: {e}")
 
         script_data = self.extract_script_data(response)
         if not script_data:
@@ -118,15 +121,27 @@ class AsyncHotelSpider(scrapy.Spider):
     #     """
     #     return response.css("script::text").re_first(r"window\.IBU_HOTEL\s*=\s*(\{.*?\});")
     def extract_script_data(self, response):
-        pattern = r"window\.IBU_HOTEL\s*=\s*(\{.*?\});"  # Regex to capture JSON data
-        match = re.search(pattern, response.text, re.DOTALL)
+        """
+        Extract the script content containing the JSON data as a string.
+        """
+        script_content = response.xpath(
+            '//script[contains(text(), "window.IBU_HOTEL")]/text()'
+        ).get()
+
+        if not script_content:
+            self.logger.warning("Script content not found. Check the XPath selector.")
+            return None
+
+        # Extract the JSON-like content as a string
+        match = re.search(r"window\.IBU_HOTEL\s*=\s*(\{.*?\});", script_content, re.DOTALL)
         if match:
-            script_data = match.group(1)
             self.logger.info("Successfully extracted script data.")
-            print("Extracted Script Data:", script_data)  # Debug print
-            return script_data
-        self.logger.warning("No script data found.")
-        return None
+            return match.group(1)  # Return JSON string
+        else:
+            self.logger.warning("No match for window.IBU_HOTEL.")
+            return None
+
+
 
     def parse_json_data(self, script_data):
         """
