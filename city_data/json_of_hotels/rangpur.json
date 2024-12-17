@@ -1,0 +1,67 @@
+[
+    {
+        "city_name": "Rangpur",
+        "property_title": "Grand Palace Hotel & Resorts Rangpur",
+        "hotel_id": 21839307,
+        "price": 84,
+        "rating": "4.3",
+        "address": "",
+        "latitude": 25.747676,
+        "longitude": 89.257117,
+        "room_type": "Executive Double Room",
+        "image": "https://ak-d.tripcdn.com/images/220f0u000000jeexm79FA_R_250_250_R5_D.jpg",
+        "image_path": "/home/w3e34/Downloads/Final_scrapy/Assignment_8/city_data/images_of_hotels/rangpur/21839307_Grand_Palace_Hotel_&_Resorts_Rangpur.jpg"
+    },
+    {
+        "city_name": "Rangpur",
+        "property_title": "Cafe Green Valley",
+        "hotel_id": 104586062,
+        "price": 40,
+        "rating": "5.0",
+        "address": "Shatgara",
+        "latitude": 25.739283,
+        "longitude": 89.230325,
+        "room_type": "Twin Room",
+        "image": "https://ak-d.tripcdn.com/images/0222r12000aqjkmtw0AA0_R_250_250_R5_D.jpg",
+        "image_path": "/home/w3e34/Downloads/Final_scrapy/Assignment_8/city_data/images_of_hotels/rangpur/104586062_Cafe_Green_Valley.jpg"
+    },
+    {
+        "city_name": "Rangpur",
+        "property_title": "Little Rangpur Inn",
+        "hotel_id": 22150141,
+        "price": "",
+        "rating": "3.7",
+        "address": "",
+        "latitude": 25.74718,
+        "longitude": 89.24912,
+        "room_type": "",
+        "image": "https://ak-d.tripcdn.com/images/0583g12000geaoco69CD0_R_250_250_R5_D.jpg",
+        "image_path": "/home/w3e34/Downloads/Final_scrapy/Assignment_8/city_data/images_of_hotels/rangpur/22150141_Little_Rangpur_Inn.jpg"
+    },
+    {
+        "city_name": "Rangpur",
+        "property_title": "Caspia the Home",
+        "hotel_id": 49115166,
+        "price": "",
+        "rating": "3.0",
+        "address": "",
+        "latitude": 25.756921,
+        "longitude": 89.239446,
+        "room_type": "",
+        "image": "https://ak-d.tripcdn.com/images/0585a12000czomnin1591_R_250_250_R5_D.jpg",
+        "image_path": "/home/w3e34/Downloads/Final_scrapy/Assignment_8/city_data/images_of_hotels/rangpur/49115166_Caspia_the_Home.jpg"
+    },
+    {
+        "city_name": "Rangpur",
+        "property_title": "Jatra Hotel Kts",
+        "hotel_id": 106660001,
+        "price": "",
+        "rating": "",
+        "address": "",
+        "latitude": 25.74295,
+        "longitude": 89.27167,
+        "room_type": "",
+        "image": "https://images3.c-ctrip.com/hotel_online_images/bff/nophoto.png",
+        "image_path": "/home/w3e34/Downloads/Final_scrapy/Assignment_8/city_data/images_of_hotels/rangpur/106660001_Jatra_Hotel_Kts.jpg"
+    }
+]

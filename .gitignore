@@ -1,35 +1,62 @@
 # Python Bytecode
 __pycache__/
-*.pyc
+*.py[cod]
 *.pyo
+*.pyd
+*.db
 
 # Virtual Environment
 venv/
-
-# Logs
-*.log
+env/
+*.env
 
 # Coverage Reports
-.coverage
 htmlcov/
+.coverage
+*.cover
 
-# Environment Variables
-.env
+# Docker-related Files
+*.log
+docker-compose.override.yml
 
-# Test Cache Files
-tests/__pycache__/
-tests/*.cpython-*.pyc
+# Local Development
+*.sqlite3
+instance/
+*.bak
 
-# City Data (optional: skip if it's generated output)
-city_data/
+# OS Files
+.DS_Store
+Thumbs.db
 
-# IDE Specific Files
+# Editor/IDE Files
 .vscode/
 .idea/
 
-# Temporary Files
-*.tmp
-*.bak
+# Dependency Logs
+pip-log.txt
+pip-delete-this-directory.txt
 
-# macOS Files
-.DS_Store
+# Scrapy Caches
+.scrapy/
+
+# Build & Distribution
+build/
+dist/
+*.egg-info/
+.eggs/
+MANIFEST
+
+# Logs
+*.log
+nohup.out
+
+# Testing
+test_*.pyc
+.pytest_cache/
+nosetests.xml
+coverage.xml
+*.test
+
+# Miscellaneous
+*.tmp
+*.lock

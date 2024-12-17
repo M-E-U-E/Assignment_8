@@ -19,6 +19,34 @@ class AsyncHotelSpider(scrapy.Spider):
         """
         script_data = self.extract_script_data(response)
         if not script_data:
+            self.logger.warning("No script data found. Cannot extract hotel data.")
+            return
+
+        try:
+            # Parse the extracted script data as JSON
+            data = json.loads(script_data)
+            hotel_list = data.get("initData", {}).get("htlsData", {}).get("hotelList", [])
+            
+            for hotel in hotel_list:
+                item = {
+                    "city_name": hotel.get("cityName", ""),
+                    "property_title": hotel.get("hotelName", ""),
+                    "hotel_id": hotel.get("hotelId", ""),
+                    "price": hotel.get("price", 0),
+                    "rating": hotel.get("rating", 0.0),
+                    "address": hotel.get("address", ""),
+                    "latitude": hotel.get("latitude", 0.0),
+                    "longitude": hotel.get("longitude", 0.0),
+                    "room_type": hotel.get("roomType", ""),
+                    "image": hotel.get("imageUrl", ""),
+                }
+                self.logger.info(f"Yielding item: {item}")
+                yield item
+        except json.JSONDecodeError as e:
+            self.logger.error(f"Failed to parse script data as JSON: {e}")
+
+        script_data = self.extract_script_data(response)
+        if not script_data:
             self.logger.warning("No valid script data found.")
             return
 
@@ -59,7 +87,7 @@ class AsyncHotelSpider(scrapy.Spider):
         output_folder = self.create_folders(city_name)
         city_json_path = os.path.join(output_folder['json'], f"{city_name.lower().replace(' ', '_')}.json")
         city_hotels = []
-
+        
         if script_data:
             try:
                 ibu_hotel_data = self.parse_json_data(script_data)
@@ -67,7 +95,10 @@ class AsyncHotelSpider(scrapy.Spider):
 
                 # Process and save hotel data
                 city_hotels = [self.process_hotel(hotel, city_name, output_folder['images']) for hotel in hotel_list]
-
+                # Process hotel details and yield each
+                for hotel in hotel_list:
+                    hotel_data = self.process_hotel(hotel, city_name, output_folder['images'])
+                    yield hotel_data  # Ensure this line is indented properly
                 # Save hotel data to JSON file
                 self.save_to_json(city_hotels, city_json_path)
 
@@ -81,11 +112,21 @@ class AsyncHotelSpider(scrapy.Spider):
             self.logger.warning(f"No script data found for city: {city_name}")
 
     # Utility Methods
+    # def extract_script_data(self, response):
+    #     """
+    #     Extract `window.IBU_HOTEL` script data from the response.
+    #     """
+    #     return response.css("script::text").re_first(r"window\.IBU_HOTEL\s*=\s*(\{.*?\});")
     def extract_script_data(self, response):
-        """
-        Extract `window.IBU_HOTEL` script data from the response.
-        """
-        return response.css("script::text").re_first(r"window\.IBU_HOTEL\s*=\s*(\{.*?\});")
+        pattern = r"window\.IBU_HOTEL\s*=\s*(\{.*?\});"  # Regex to capture JSON data
+        match = re.search(pattern, response.text, re.DOTALL)
+        if match:
+            script_data = match.group(1)
+            self.logger.info("Successfully extracted script data.")
+            print("Extracted Script Data:", script_data)  # Debug print
+            return script_data
+        self.logger.warning("No script data found.")
+        return None
 
     def parse_json_data(self, script_data):
         """
@@ -145,7 +186,7 @@ class AsyncHotelSpider(scrapy.Spider):
             "image": image_url,
             "image_path": os.path.join(images_dir, f"{hotel_id}_{hotel_name}.jpg") if image_url else None
         }
-
+    
     async def download_images(self, hotel_list):
         """
         Download hotel images asynchronously.
